@@ -3,7 +3,7 @@ allow_empty = undefined;
 firstframe = true;
 scroll_y = 0;
 
-all_sounds_builtin = [ // "you are using this twice! Why not make it a global?" "i'm lazy"
+all_sounds_builtin = [ //  "you are using this twice! Why not make it a global?" "i'm lazy"
 	"mfx_back",
 	"mfx_change_color",
 	"mfx_chat_received",
