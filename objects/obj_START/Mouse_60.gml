@@ -1,0 +1,1 @@
+global.scroll_y += 60;
