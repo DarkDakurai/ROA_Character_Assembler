@@ -13,6 +13,7 @@ layer_text_blend(layer_text_get_id("Assets_2", "TxtSounds"), c_white);
 layer_text_blend(layer_text_get_id("Assets_2", "TxtAi"), c_white);
 layer_text_blend(layer_text_get_id("Assets_2", "TxtAttacks"), c_white);
 layer_text_blend(layer_text_get_id("Assets_2", "TxtColors"), c_white);
+layer_text_blend(layer_text_get_id("Assets_2", "text_B07DCB7"), c_white);
 
 
 
@@ -22,6 +23,7 @@ if mouse_in_rectangle(1305, 0, 1365, 60) {
 }
 
 if focus == "nothing" {
+	// the back arrow button
 	if mouse_in_rectangle(0, 0, 90, 60) {
 		layer_text_blend(layer_text_get_id("Assets_1", "BackArrow"), c_yellow);
 		if mouse_check_button_pressed(mb_left) {
@@ -34,10 +36,10 @@ if focus == "nothing" {
 		set_cursor(cr_handpoint);
 	}
 
-	if mouse_in_rectangle(1250, 64, 1365, 126) {
+
+	if mouse_in_uibox("Assets_1", "graphic_6F0E5330", cr_handpoint, false) {
 		layer_text_blend(layer_text_get_id("Assets_1", "ExportButton"), c_lime);
 		if mouse_check_button_pressed(mb_left) and global.selected_dest == 0 {freeze = true; my_popup_id = get_string_async("Insert export filename (this will override any folder with this filename already existing inside the worshop folder!)", global.selected_filename)}
-		set_cursor(cr_handpoint);
 	}
 	
 	if mouse_in_rectangle(370, 70, 1240, 135) {
@@ -85,40 +87,39 @@ if focus == "nothing" {
 		set_cursor(cr_handpoint);
 	}
 	
-	if mouse_in_rectangle(15, 430, 15 + 430, 430 + 152) {
+	if mouse_in_uibox("Assets_2", "graphic_295F16BF", cr_handpoint, false) {
 		if mouse_check_button_pressed(mb_left) {room_goto(CharEdit_Stats)}
 		layer_text_blend(layer_text_get_id("Assets_2", "TxtStats"), c_orange);
-		set_cursor(cr_handpoint);
 	}
 	
-	if mouse_in_rectangle(468, 430, 468 + 430, 430 + 152) {
+	if mouse_in_uibox("Assets_2", "graphic_3D256733", cr_handpoint, false) {
 		if mouse_check_button_pressed(mb_left) {room_goto(CharEdit_Sounds)}
 		layer_text_blend(layer_text_get_id("Assets_2", "TxtSounds"), c_yellow);
-		set_cursor(cr_handpoint);
 	}
 	
-	if mouse_in_rectangle(921, 430, 921 + 430, 430 + 152) {
+	if mouse_in_uibox("Assets_2", "graphic_62617488", cr_handpoint, false) {
 		if mouse_check_button_pressed(mb_left) {room_goto(CharEdit_Ai)}
 		layer_text_blend(layer_text_get_id("Assets_2", "TxtAi"), c_fuchsia);
-		set_cursor(cr_handpoint);
 	}
 	
-	if mouse_in_rectangle(15, 603, 15 + 430, 603 + 152) {
+	if mouse_in_uibox("Assets_2", "graphic_37808813", cr_handpoint, false) {
 		if mouse_check_button_pressed(mb_left) {room_goto(CharEdit_Sprites)}
 		layer_text_blend(layer_text_get_id("Assets_2", "TxtSprites"), c_lime);
-		set_cursor(cr_handpoint);
 	}
 	
-	if mouse_in_rectangle(464, 603, 464 + 430, 603 + 152) {
+	if mouse_in_uibox("Assets_2", "graphic_2D17E9D9", cr_handpoint, false) {
 		if mouse_check_button_pressed(mb_left) {room_goto(CharEdit_Attacks)}
 		layer_text_blend(layer_text_get_id("Assets_2", "TxtAttacks"), c_aqua);
-		set_cursor(cr_handpoint);
 	}
 	
-	if mouse_in_rectangle(921, 603, 921 + 430, 603 + 152) {
+	if mouse_in_uibox("Assets_2", "graphic_3582C489", cr_handpoint, false) {
 		if mouse_check_button_pressed(mb_left) {room_goto(CharEdit_Colors)}
 		layer_text_blend(layer_text_get_id("Assets_2", "TxtColors"), make_color_hsv((global.tick * 2) mod 256, 255, 255));
-		set_cursor(cr_handpoint);
+	}
+	
+	if mouse_in_uibox("Assets_2", "graphic_4A5FF3F2", cr_handpoint, false) {
+		if mouse_check_button_pressed(mb_left) {room_goto(CharEdit_Scripts)}
+		layer_text_blend(layer_text_get_id("Assets_2", "text_B07DCB7"), c_purple);
 	}
 	
 	

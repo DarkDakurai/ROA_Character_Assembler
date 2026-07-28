@@ -1,23 +1,8 @@
 focus = "nothing";
 freeze = false;
 
-global.config_data = archive_fetch_file(AP.MAIN, get_full_path("config.ini"));	
-if global.config_data == undefined {
-	show_message(string("Missing config.ini: \nDue to this error, you will be taken to the starting menu.\nTIP: If config.ini is missing, try copying it from another character's directory"));
-	room_goto(START);
-	exit;
-}
-
-var _spr = archive_fetch_file(AP.MAIN, get_full_path("portrait.png"));
-if _spr == undefined {
-	if !archive_create(AP.MAIN, get_full_path("portrait.png"), FT.SPRITE) {
-		show_message("Failed to find portrait AND failed to create protrait sprite");
-		room_goto(START);
-		exit;
-	}
-	_spr = archive_fetch_file(AP.MAIN, get_full_path("portrait.png"))
-}
-
+var _spr = primary_checks();
+if _spr == undefined {exit;}
 layer_sprite_change(layer_sprite_get_id("Assets_1", "graphic_156F9130"), _spr);
 
 layer_text_text(layer_text_get_id("Assets_2", "CharName"), global.config_data.name);
@@ -28,6 +13,7 @@ layer_text_text(layer_text_get_id("Assets_2", "CharInfo1"), global.config_data.i
 layer_text_text(layer_text_get_id("Assets_2", "CharInfo2"), global.config_data.info2);
 layer_text_text(layer_text_get_id("Assets_2", "CharInfo3"), global.config_data.info3);
 
+// DOWN HERE I SPLIT MANY OF THE FUNCTIONS INTO SMALLER ONES
 
 function export(_result) { // forgive me for my sins
 	var _thispath = global.selected_path;
@@ -57,4 +43,27 @@ function export(_result) { // forgive me for my sins
 
 function is_workshop_name_taken(_name) {
 	return directory_exists(string("{0}/{1}", get_workshop_path(), _name));
+}
+
+/// @desc If something is off, tries to correct it. If it fails it returns to the start menu
+function primary_checks() {
+	// looks for config.ini
+	global.config_data = archive_fetch_file(AP.MAIN, get_full_path("config.ini"));	
+	if global.config_data == undefined {
+		show_message(string("Missing config.ini: \nDue to this error, you will be taken to the starting menu.\nTIP: If config.ini is missing, try copying it from another character's directory"));
+		room_goto(START);
+		exit;
+	}
+
+	// looks for portrait.png
+	var _spr = archive_fetch_file(AP.MAIN, get_full_path("portrait.png"));
+	if _spr == undefined {
+		if !archive_create(AP.MAIN, get_full_path("portrait.png"), FT.SPRITE) {
+			show_message("Failed to find portrait AND failed to create protrait sprite");
+			room_goto(START);
+			exit;
+		}
+		_spr = archive_fetch_file(AP.MAIN, get_full_path("portrait.png"))
+	}
+	return _spr;
 }

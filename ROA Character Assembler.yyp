@@ -74,6 +74,7 @@
     {"id":{"name":"CharEdit_Attacks","path":"rooms/CharEdit_Attacks/CharEdit_Attacks.yy",},},
     {"id":{"name":"CharEdit_Colors","path":"rooms/CharEdit_Colors/CharEdit_Colors.yy",},},
     {"id":{"name":"CharEdit_Main","path":"rooms/CharEdit_Main/CharEdit_Main.yy",},},
+    {"id":{"name":"CharEdit_Scripts","path":"rooms/CharEdit_Scripts/CharEdit_Scripts.yy",},},
     {"id":{"name":"CharEdit_Sounds","path":"rooms/CharEdit_Sounds/CharEdit_Sounds.yy",},},
     {"id":{"name":"CharEdit_Sprites","path":"rooms/CharEdit_Sprites/CharEdit_Sprites.yy",},},
     {"id":{"name":"CharEdit_Stats","path":"rooms/CharEdit_Stats/CharEdit_Stats.yy",},},
@@ -113,6 +114,7 @@
     {"id":{"name":"spr_rectangle","path":"sprites/spr_rectangle/spr_rectangle.yy",},},
     {"id":{"name":"spr_rectanglr_round","path":"sprites/spr_rectanglr_round/spr_rectanglr_round.yy",},},
     {"id":{"name":"spr_save","path":"sprites/spr_save/spr_save.yy",},},
+    {"id":{"name":"spr_scripts","path":"sprites/spr_scripts/spr_scripts.yy",},},
     {"id":{"name":"spr_sounds","path":"sprites/spr_sounds/spr_sounds.yy",},},
     {"id":{"name":"spr_sprites_hurt","path":"sprites/spr_sprites_hurt/spr_sprites_hurt.yy",},},
     {"id":{"name":"spr_sprites","path":"sprites/spr_sprites/spr_sprites.yy",},},
@@ -135,6 +137,7 @@
     {"roomId":{"name":"CharEdit_Ai","path":"rooms/CharEdit_Ai/CharEdit_Ai.yy",},},
     {"roomId":{"name":"CharEdit_Attacks","path":"rooms/CharEdit_Attacks/CharEdit_Attacks.yy",},},
     {"roomId":{"name":"CharEdit_Stats","path":"rooms/CharEdit_Stats/CharEdit_Stats.yy",},},
+    {"roomId":{"name":"CharEdit_Scripts","path":"rooms/CharEdit_Scripts/CharEdit_Scripts.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
