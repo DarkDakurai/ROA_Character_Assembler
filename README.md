@@ -1,6 +1,7 @@
 # RoA Character Assembler
 
-A tool that helps do the dirty work of making a Rivals of Aether character. This program is meant to be used as a time saver and is not intended for advanced characters.
+A tool that helps do the dirty work of making a Rivals of Aether character. 
+This program is meant to be used as a time saver and is not intended for advanced characters.
 
 Welcome to the Rivals of Aether Character Assembler!
 
