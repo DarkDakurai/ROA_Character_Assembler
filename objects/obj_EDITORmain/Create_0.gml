@@ -52,7 +52,7 @@ function export(_result) { // forgive me for my sins
 		file_copy(string("{0}/{1}", _thispath, _rel_path), _dest_file);
 	}
 	
-	show_message("Successfully exported to the rivals of eather workshop folder!\nYou should be able to see your character in game now");
+	show_message("Successfully exported to the Rivals of Aether workshop folder!\nYou should be able to see your character in game now");
 }
 
 function is_workshop_name_taken(_name) {
