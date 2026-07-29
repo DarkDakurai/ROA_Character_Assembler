@@ -1,6 +1,8 @@
 focus = "nothing";
 freeze = false;
 
+file_dropper_set_allow(false);
+
 var _spr = primary_checks();
 if _spr == undefined {exit;}
 layer_sprite_change(layer_sprite_get_id("Assets_1", "graphic_156F9130"), _spr);

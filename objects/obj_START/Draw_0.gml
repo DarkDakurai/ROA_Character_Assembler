@@ -40,10 +40,13 @@ for (i = 0; i < array_length(global.saved_paths); i++) {
 	}
 }
 
+layer_set_visible("Overlay", filedrag);
+
 for (i = 0; i < array_length(global.templates); i++) {
 	var _val = "templates/" + global.templates[i];
 	var _y_diff = global.scroll_y2 + 230 + i * 25;
 	
+	draw_set_halign(fa_left);
 	draw_set_font(fnt_maplemono_SDF);
 	if file_exists(_val) {
 		var _col = multiplexer(global.selected_template == i, c_white, c_yellow)
@@ -62,6 +65,7 @@ for (i = 0; i < array_length(global.templates); i++) {
 		if global.selected_template == i {global.selected_template = 0}
 		i--;
 	}
+	if global.selected_template > array_length(global.templates) {global.selected_template == 0}
 	draw_set_font(fnt_jersey20_SDF);
 }
 

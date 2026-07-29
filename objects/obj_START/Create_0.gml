@@ -1,3 +1,5 @@
+file_dropper_init();
+
 if !variable_global_exists("superpath") {
 	global.superpath = "saved/";
 	global.selected_dest = 0;
@@ -15,8 +17,7 @@ if !variable_global_exists("scroll_y") {global.scroll_y = 0;}
 if !variable_global_exists("scroll_y2") {global.scroll_y2 = 0;}
 eraseconfirm = 0;
 eraseid = -1;
-
-
+reset_drag();
 
 for (var i = 0; i < array_length(global.previews); i++) {sprite_delete(global.previews[i])}
 global.previews = [];
@@ -77,7 +78,7 @@ for (var i = 0; i < array_length(global.saved_paths); i++) {
 }
 
 function load_templates() {
-	global.selected_template = 0;
+	if !variable_global_exists("selected_template") {global.selected_template = 0;}
 	if !directory_exists("templates") {
 		directory_create("templates");
 		if !file_exists("template.zip") {
@@ -95,7 +96,12 @@ function load_templates() {
 	}
 }
 
-
+function reset_drag () {
+	filedrag = false;
+	draggedpath = "";
+	numdragfiles = 0;
+	numdragfilessuccess = 0;
+}
 
 
 
