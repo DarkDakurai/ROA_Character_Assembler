@@ -4,9 +4,10 @@ tabs = [];
 global.scroll_y = 0;
 tab_view = 0;
 tab_view_speed = 0;
+hovered_x = -1;
 
 surf_scripts = surface_create(300, 690);
-surf_tabs = surface_create(922, 60);
+surf_tabs = surface_create(986, 70);
 
 expanded_attacks = 0;
 scriptview = [0, 0];

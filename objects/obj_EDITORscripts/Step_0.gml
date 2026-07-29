@@ -23,7 +23,7 @@ if mouse_in_rectangle(0, 62, 294, 768){
 	if mouse_check_button_pressed(mb_left){ //pick and open scripts
 		draw_set_font(fnt_maplemono_SDF);
 		var c_id = floor((mouse_y-70 - scriptview[1])/20)
-		if c_id == clamp(c_id, 0, scripts_size[1]/20){
+		if c_id == clamp(c_id, 0, scripts_size[1]/20 - 1){
 			var but = (c_id == 0? -1: (expanded_attacks? (c_id-1 < array_length(attack_pickers)? attack_pickers[c_id-1]: script_pickers[c_id-1-array_length(attack_pickers)]): script_pickers[c_id-1]));
 			if mouse_x == clamp(mouse_x, 0, (but == -1? string_width("|- attacks/"): string_width(but.full_string))){
 				if select_id == c_id{
@@ -38,10 +38,27 @@ if mouse_in_rectangle(0, 62, 294, 768){
 
 //handle tab area
 tab_view_speed = lerp(tab_view_speed, 0, .1);
-if mouse_in_rectangle(312, 0, 927+312, 60){
-	tab_view = clamp(tab_view, -array_length(tabs)*150 + 922, 0)
+if mouse_in_rectangle(312, 0, 986+312, 60){
+	tab_view = clamp(tab_view, -array_length(tabs)*200 + 986, 0)
 	tab_view_speed += 10*(mouse_wheel_up()-mouse_wheel_down());
 	tab_view += tab_view_speed;
+	hovered_x = -1;
+	
+	var _g = 0;
+	repeat array_length(tabs){
+		var tb = tabs[_g];
+		if mouse_in_rectangle(tab_view + 314 + 200*_g + 5, 10, tab_view + 314 + 200*_g + 190, 62){
+			if mouse_in_rectangle(tab_view + 314 + 200*_g + 170, 30, tab_view + 314 + 200*_g + 180, 48) hovered_x = _g;
+			if mouse_check_button_pressed(mb_left){
+				if hovered_x == _g{
+					instance_destroy(tb);
+					array_delete_value(tabs, tb);
+					break;
+				}else tab = tb;
+			}
+		}
+		_g++;
+	}
 }
 
 function create_tab(scrpt){
@@ -58,7 +75,6 @@ function create_tab(scrpt){
 	tab.name = scrpt.name;
 	tab.filepath = scrpt.fullpath;
 	array_push(tabs, tab)
-	show_debug_message("tab created")
 }
 
 
