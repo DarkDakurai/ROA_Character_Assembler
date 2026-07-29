@@ -11,7 +11,8 @@ if !variable_global_exists("superpath") {
 global.saved_paths = get_directories(global.superpath);
 global.selected_path = "";
 global.selected_filename = "";
-global.scroll_y = 0;
+if !variable_global_exists("scroll_y") {global.scroll_y = 0;}
+if !variable_global_exists("scroll_y2") {global.scroll_y2 = 0;}
 eraseconfirm = 0;
 eraseid = -1;
 
@@ -21,6 +22,8 @@ for (var i = 0; i < array_length(global.previews); i++) {sprite_delete(global.pr
 global.previews = [];
 global.charconfs = [];
 global.filenames = [];
+global.templates = [];
+load_templates();
 draw_set_halign(fa_center);
 
 for (var i = 0; i < array_length(global.saved_paths); i++) {
@@ -73,7 +76,24 @@ for (var i = 0; i < array_length(global.saved_paths); i++) {
 	}
 }
 
-
+function load_templates() {
+	global.selected_template = 0;
+	if !directory_exists("templates") {
+		directory_create("templates");
+		if !file_exists("template.zip") {
+			show_message("Couldn't find template.zip, for this reason creating a new character is disabled until you import a template zip file");
+		}
+		file_copy("template.zip", "templates/template.zip");
+	}
+	
+	var _temps = get_all_files("templates/");
+	
+	for (var i = 0; i < array_length(_temps); i++) {
+		if filename_ext(_temps[i]) == ".zip" {
+			array_push(global.templates, _temps[i]);
+		}
+	}
+}
 
 
 

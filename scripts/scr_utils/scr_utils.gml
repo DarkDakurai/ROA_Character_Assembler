@@ -868,3 +868,32 @@ function reverse_clamp(_num, _min, _max) {
 		return _num;
 	}
 }
+
+/// @desc						Similar to string_copy, but takes from-to positions instead of start and length
+/// @param {String} string		The string to check
+/// @param {Real} start_index	The starting index to start the copy
+/// @param {Real} end_index		The finishing index to end the copy
+//FUCK YOU STRING_COPY I WILL NOT BOW TO YOUR BULLSHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function string_copy_alt(_str, index_1, index_2) {
+	if index_1 < index_2 {
+		return string_copy(_str, index_1, index_2 - index_1);
+	}
+	return "";
+}
+
+/// @desc					Checks if the mouse cursor is inside a rectangle determined by the top left corner pos (x1, y1) and the bottom right corner (x2, y2)
+/// @param {Real} x1		The x coord of the top left corner
+/// @param {Real} y1		The y coord of the top left corner
+/// @param {Real} x2		The x coord of the bottom right corner
+/// @param {Real} y2		The y coord of the bottom right corner
+/// @param {Bool} debug		Wether or not to draw a red rectangle around the check area, works only inside draw events
+function mouse_in_rectangle(_x1, _y1, _x2, _y2, _debug = false) {
+	if _debug {draw_rectangle_colour(_x1, _y1, _x2, _y2, c_red, c_red, c_red, c_red, true)}
+	return point_in_rectangle(mouse_x, mouse_y, _x1, _y1, _x2, _y2);
+}
+
+/// @desc					Wrapper function for show_debug_message()
+/// @param {Any} output		The value to pass
+function print(_msg) {
+	show_debug_message(_msg);
+}

@@ -320,12 +320,6 @@ function read_character_config(_path) {
 	return _struct;
 }
 
-/// @desc I wanna take this function to bed fr fr it's amazing how it checks the position of the mouse and returns true if it's inside the given rectangle
-function mouse_in_rectangle(_x1, _y1, _x2, _y2, _debug = false) {
-	if _debug {draw_rectangle_colour(_x1, _y1, _x2, _y2, c_red, c_red, c_red, c_red, true)}
-	return point_in_rectangle(mouse_x, mouse_y, _x1, _y1, _x2, _y2);
-}
-
 /// @desc Draws a debug rectange, it's big, it's ugly, but it gets the job done
 function draw_debug_rectangle(_x, _y, _x2 = mouse_x_diff(true), _y2 = mouse_y_diff(true)) {
 	draw_rectangle_colour(_x, _y, _x2, _y2, c_red, c_blue, c_green, c_yellow, false);
@@ -337,6 +331,19 @@ function askfor_png_path() {
 	
 	if (_path != "") {
 		if (string_lower(filename_ext(_path)) == ".png") { // Watch yo tone mf
+			return _path;
+		}
+	}
+	
+	return "";
+}
+
+/// @desc Ask for a zippty file
+function askfor_zip_path() {
+	var _path = get_open_filename("ZIP Folder|*.zip", "");
+	
+	if (_path != "") {
+		if (string_lower(filename_ext(_path)) == ".zip") {
 			return _path;
 		}
 	}
@@ -628,17 +635,9 @@ function get_workshop_path() {
 	return string("{0}/RivalsofAether/workshop", environment_get_variable("LOCALAPPDATA"));
 }
 
-/// @desc Cursor shapes are giving me more trouble than i wish they did.. i'm just a good boy... wait why the hell did i say that?????
+/// @desc Sets the cursor variable to a cursor. Cursor shapes are giving me more trouble than i wish they did.. i'm just a good boy... wait why the hell did i say that?????
 function set_cursor(_cursor) {
 	global.cursor = _cursor;
-}
-
-/// @desc FUCK YOU STRING_COPY I WILL NOT BOW TO YOUR BULLSHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-function string_copy_alt(_str, index_1, index_2) {
-	if index_1 < index_2 {
-		return string_copy(_str, index_1, index_2 - index_1);
-	}
-	return "";
 }
 
 // P.S: Yes i had fun writing the comments
