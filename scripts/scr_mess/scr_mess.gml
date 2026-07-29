@@ -265,7 +265,7 @@ function get_custom_sounds(_path) {
 	return _sound_array;
 }
 
-///// @desc COMMENTED FUNCTION WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+// COMMENTED FUNCTION WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 //function save_normal_stats(_filepath) {
 //	var _file = file_text_open_read(_filepath);
 //	var _new_file_string = "";
