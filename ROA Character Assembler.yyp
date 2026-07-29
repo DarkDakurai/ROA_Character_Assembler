@@ -60,6 +60,7 @@
     {"id":{"name":"obj_EDITORattacks","path":"objects/obj_EDITORattacks/obj_EDITORattacks.yy",},},
     {"id":{"name":"obj_EDITORcolors","path":"objects/obj_EDITORcolors/obj_EDITORcolors.yy",},},
     {"id":{"name":"obj_EDITORmain","path":"objects/obj_EDITORmain/obj_EDITORmain.yy",},},
+    {"id":{"name":"obj_EDITORscripts","path":"objects/obj_EDITORscripts/obj_EDITORscripts.yy",},},
     {"id":{"name":"obj_EDITORsounds","path":"objects/obj_EDITORsounds/obj_EDITORsounds.yy",},},
     {"id":{"name":"obj_EDITORsprites","path":"objects/obj_EDITORsprites/obj_EDITORsprites.yy",},},
     {"id":{"name":"obj_EDITORstats","path":"objects/obj_EDITORstats/obj_EDITORstats.yy",},},

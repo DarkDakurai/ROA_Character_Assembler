@@ -65,7 +65,7 @@ for (i = 0; i < array_length(global.templates); i++) {
 		if global.selected_template == i {global.selected_template = 0}
 		i--;
 	}
-	if global.selected_template > array_length(global.templates) {global.selected_template == 0}
+	if global.selected_template > array_length(global.templates) {global.selected_template = 0}
 	draw_set_font(fnt_jersey20_SDF);
 }
 

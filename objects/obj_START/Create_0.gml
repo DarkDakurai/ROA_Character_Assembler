@@ -46,7 +46,7 @@ for (var i = 0; i < array_length(global.saved_paths); i++) {
 	
 	if file_exists(_char_path) {
 		var _confstr = read_character_config(_char_path);
-		if _confstr.type == 0 {
+		if variable_instance_exists(_confstr, "type") && _confstr.type == 0 {
 			array_push(global.charconfs, _confstr);
 		} else {
 			array_delete(global.saved_paths, i, 1);
