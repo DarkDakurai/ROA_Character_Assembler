@@ -32,6 +32,7 @@
     {"name":"obj_EDITORstats","order":12,"path":"objects/obj_EDITORstats/obj_EDITORstats.yy",},
     {"name":"obj_HitboxManager","order":2,"path":"objects/obj_HitboxManager/obj_HitboxManager.yy",},
     {"name":"obj_pingas","order":13,"path":"objects/obj_pingas/obj_pingas.yy",},
+    {"name":"obj_ScriptTab","order":4,"path":"objects/obj_ScriptTab/obj_ScriptTab.yy",},
     {"name":"obj_SoundPicker","order":4,"path":"objects/obj_SoundPicker/obj_SoundPicker.yy",},
     {"name":"obj_SpritePicker","order":1,"path":"objects/obj_SpritePicker/obj_SpritePicker.yy",},
     {"name":"obj_START","order":1,"path":"objects/obj_START/obj_START.yy",},
