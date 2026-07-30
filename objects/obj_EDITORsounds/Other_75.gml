@@ -8,17 +8,17 @@ switch (async_load[?"event_type"]) {
 	case "file_drop":
 		numdragfiles++;
 		var _f = async_load[?"filename"];
-		if filename_ext(_f) == ".zip" {
+		if filename_ext(_f) == ".ogg" {
+			file_copy(_f, get_full_path("sounds/" + filename_name(_f)));
 			numdragfilessuccess++;
-			file_copy(_f, "templates/" + filename_name(_f));
 		}
 		break;
 	case "file_drop_end":
 		if numdragfiles > 0 {
 			if numdragfiles == numdragfilessuccess {
-				show_message(string("Successfully imported {0} templates", numdragfilessuccess));
+				show_message(string("Successfully imported {0} sounds", numdragfilessuccess));
 			} else {
-				show_message(string("Successfully imported {0} templates out of {1} files", numdragfilessuccess, numdragfiles));
+				show_message(string("Successfully imported {0} sounds out of {1} files", numdragfilessuccess, numdragfiles));
 			}
 			room_restart();
 		}

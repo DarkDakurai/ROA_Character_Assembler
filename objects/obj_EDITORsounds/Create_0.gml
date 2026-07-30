@@ -6,6 +6,7 @@ playing_instance = -1;
 scroll = 0;
 use_array = lookfor_uses_builtin();
 global.scroll_y = 0;
+reset_drag();
 
 all_sounds_builtin = [ // all sound array the looooooooooooooong wae
 	"mfx_back",

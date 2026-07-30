@@ -640,4 +640,22 @@ function set_cursor(_cursor) {
 	global.cursor = _cursor;
 }
 
+/// @desc Resets or initializes the drag variables for file dragging dragginator of draggington
+function reset_drag () {
+	file_dropper_set_allow(true);
+	filedrag = false;
+	draggedpath = "";
+	numdragfiles = 0;
+	numdragfilessuccess = 0;
+}
+
+/// @desc NEEDS reset_drag TO FUNCTION!! (function hehe get it?) - Shows or hides a certain layer based on the file drag state
+function tick_dragging_layer(_asslayer) {
+	if !variable_instance_exists(id, "filedrag") {
+		show_debug_message("Tried to tick instance without initializing filedrag variables!"); // this will surely annoy me to the point of fixing it
+		exit;
+	}
+	layer_set_visible(_asslayer, filedrag);
+}
+
 // P.S: Yes i had fun writing the comments

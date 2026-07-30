@@ -15,6 +15,7 @@ origname = "";
 hurttwin = -1;
 notouch = false;
 global.scroll_y = 0;
+reset_drag();
 
 function load_all() {
 	all_loaded_sprites = [];
@@ -170,8 +171,6 @@ function sprite_save_green_animated(_sprite) {
 	surface_free(_surf);
 	return _new_sprite;
 }
-
-
 
 
 

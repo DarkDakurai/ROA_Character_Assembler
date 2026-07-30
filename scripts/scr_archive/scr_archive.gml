@@ -397,12 +397,40 @@ function archive_create(_archpos, _newfullpath, _ftype) {
 	}
 }
 
-// @desc 10- given an existing path and a NEW path, moves the old to the new
+/// @desc 10- given an existing path and a NEW path, moves the old to the new
 function archive_reposition(_archpos, _fullpath, _fullpathnew) {
 	var _struct = archive_fetch_filestruct(_archpos, _fullpath);
 	if _struct == undefined or archive_fetch_filestruct(_archpos, _fullpathnew) != undefined {return false}
 	_struct.path = _fullpathnew;
 	_struct.modified = true;
+	return true;
+}
+
+/// @desc 10.5- given an existing path replaces the old file with the new one (file must match struct's filetype)
+function archive_replace(_archpos, _fullpath, _newFile) {
+	var _filestr = archive_fetch_filestruct(_archpos, _fullpath);
+	if _filestr == undefined {return false}
+	switch _filestr.type {
+		case FT.SPRITE:
+			if filename_ext(_newFile) == ".png" {
+				archive_edit_sprite(_archpos, _fullpath, _newFile, _fullpath);
+			} else {return false}
+			break;
+		case FT.INI:
+			if filename_ext(_newFile) == ".ini" {
+				_filestr.file = add_ini_struct(_newFile);
+				_filestr.modified = true;
+				global.archive_modified = true;
+			} else {return false}
+			break;
+		case FT.GML:
+			if filename_ext(_newFile) == ".gml" {
+				_filestr.file = add_gml_array(_newFile);
+				_filestr.modified = true;
+				global.archive_modified = true;
+			} else {return false}
+			break;
+	}
 	return true;
 }
 

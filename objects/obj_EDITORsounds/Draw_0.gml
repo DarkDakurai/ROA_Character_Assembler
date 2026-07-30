@@ -1,5 +1,5 @@
 set_cursor(cr_default);
-
+tick_dragging_layer("Overlay")
 global.scroll_y = clamp(global.scroll_y, -(19 + 102) * (array_length(all_sounds_builtin) + array_length(all_sounds_custom)), 0)
 
 var k = 0;

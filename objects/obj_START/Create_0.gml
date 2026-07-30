@@ -96,15 +96,6 @@ function load_templates() {
 	}
 }
 
-function reset_drag () {
-	filedrag = false;
-	draggedpath = "";
-	numdragfiles = 0;
-	numdragfilessuccess = 0;
-}
-
-
-
 
 
 

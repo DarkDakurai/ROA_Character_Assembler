@@ -8,6 +8,7 @@ if mouse_in_rectangle(0, 0, 90, 60) {
 }
 
 layer_set_visible(layer_get_id("Assets_3"), focus != "nothing");
+tick_dragging_layer("Overlay");
 
 if focus == "nothing" {
 	layer_background_blend(layer_background_get_id("Background"), c_black);

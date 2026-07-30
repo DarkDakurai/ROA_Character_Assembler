@@ -40,7 +40,7 @@ for (i = 0; i < array_length(global.saved_paths); i++) {
 	}
 }
 
-layer_set_visible("Overlay", filedrag);
+tick_dragging_layer("Overlay");
 
 for (i = 0; i < array_length(global.templates); i++) {
 	var _val = "templates/" + global.templates[i];
@@ -74,13 +74,14 @@ layer_sprite_blend(get_ui_id("Assets_1", "graphic_2D707A0B", true), _col);
 layer_sprite_blend(get_ui_id("Assets_1", "graphic_17131E6A", true), _col);
 
 if _col == c_aqua and mouse_check_button_pressed(mb_left) {
-	show_message("Please select a .zip file including all the files for a character:\nThe zip file should look like this:\n templatecharacter.zip/...\nNOT LIKE THIS:\n templatecharacter.zip/character/...");
+	show_message("Please select a .zip file including all the files for a character:\nThe zip file should look like this:\n templatecharacter.zip/...\nNOT LIKE THIS:\n templatecharacter.zip/character/...\n\nYou CAN drag multiple .zip files here to import them quickly as templates");
 	var _newp = askfor_zip_path();
 	if _newp == "" {
 		show_message("Template import failed: Invalid file type or action was cancelled");
 		exit;
 	}
 	file_copy(_newp, "templates/" + filename_name(_newp));
+	room_restart();
 }
 
 layer_text_blend(get_ui_id("Assets_1", "text_5453ED1F", false), c_white);

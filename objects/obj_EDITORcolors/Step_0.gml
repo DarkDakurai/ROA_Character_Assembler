@@ -4,7 +4,7 @@ layer_text_blend(layer_text_get_id("Assets_1", "BackArrow1"), c_white);
 layer_text_blend(layer_text_get_id("Assets_1", "CloseButton1"), c_white);
 layer_text_blend(layer_text_get_id("Assets_1", "CopyClipboard"), c_white);
 layer_text_blend(layer_text_get_id("Assets_1", "ImportClipboard"), c_white);
-
+tick_dragging_layer("Overlay");
 
 if mouse_in_rectangle(1305, 0, 1365, 60) {
 	layer_text_blend(layer_text_get_id("Assets_1", "CloseButton1"), c_red);

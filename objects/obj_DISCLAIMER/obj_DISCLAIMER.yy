@@ -1,11 +1,11 @@
 {
   "$GMObject":"",
-  "%Name":"obj_pingas",
+  "%Name":"obj_DISCLAIMER",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_pingas",
+  "name":"obj_DISCLAIMER",
   "overriddenProperties":[],
   "parent":{
     "name":"Objects",

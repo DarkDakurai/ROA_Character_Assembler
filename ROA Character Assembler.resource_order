@@ -23,6 +23,7 @@
   "ResourceOrderSettings":[
     {"name":"file_dropper","order":1,"path":"extensions/file_dropper/file_dropper.yy",},
     {"name":"fnt_maplemono_SDF","order":1,"path":"fonts/fnt_maplemono_SDF/fnt_maplemono_SDF.yy",},
+    {"name":"obj_DISCLAIMER","order":13,"path":"objects/obj_DISCLAIMER/obj_DISCLAIMER.yy",},
     {"name":"obj_EDITORai","order":7,"path":"objects/obj_EDITORai/obj_EDITORai.yy",},
     {"name":"obj_EDITORattacks","order":9,"path":"objects/obj_EDITORattacks/obj_EDITORattacks.yy",},
     {"name":"obj_EDITORcolors","order":4,"path":"objects/obj_EDITORcolors/obj_EDITORcolors.yy",},
@@ -31,7 +32,6 @@
     {"name":"obj_EDITORsprites","order":8,"path":"objects/obj_EDITORsprites/obj_EDITORsprites.yy",},
     {"name":"obj_EDITORstats","order":12,"path":"objects/obj_EDITORstats/obj_EDITORstats.yy",},
     {"name":"obj_HitboxManager","order":2,"path":"objects/obj_HitboxManager/obj_HitboxManager.yy",},
-    {"name":"obj_pingas","order":13,"path":"objects/obj_pingas/obj_pingas.yy",},
     {"name":"obj_ScriptTab","order":4,"path":"objects/obj_ScriptTab/obj_ScriptTab.yy",},
     {"name":"obj_SoundPicker","order":4,"path":"objects/obj_SoundPicker/obj_SoundPicker.yy",},
     {"name":"obj_SpritePicker","order":1,"path":"objects/obj_SpritePicker/obj_SpritePicker.yy",},
