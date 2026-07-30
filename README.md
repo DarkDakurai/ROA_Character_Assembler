@@ -24,4 +24,4 @@ If you find any bugs, please report them here on GitHub in the Issues section.
 
 *Note: The program MAY crash if you refresh the Sound Manager too many times or if you select characters over and over, you have been warned.*
 
-Special thanks to EquinoxDoodles, YoYo Games, and Aether Studios.
+Special thanks to Dakurai, EquinoxDoodles, YoYo Games, and Aether Studios.
