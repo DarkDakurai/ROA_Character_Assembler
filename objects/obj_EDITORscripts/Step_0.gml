@@ -89,7 +89,7 @@ function reload_scripts(){
 
 	var _i = 0;
 	var _scrps = archive_fetch(AP.SCRIPTS);
-	draw_set_font(Maple_mono);
+	draw_set_font(fnt_maplemono_SDF);
 	repeat array_length(_scrps){
 		var _path = _scrps[_i].path;
 		var _split = string_split(_path, "/");
