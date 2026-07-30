@@ -50,7 +50,18 @@ for (i = 0; i < array_length(global.templates); i++) {
 	draw_set_font(fnt_maplemono_SDF);
 	if file_exists(_val) {
 		var _col = multiplexer(global.selected_template == i, c_white, c_yellow)
-		draw_sprite_ext(spr_directory, 1, 931, _y_diff, 2, 2, 0, c_white, 1);
+		
+		if mouse_in_rectangle(936, 7 + _y_diff, 959, 26 + _y_diff, false) {
+			draw_sprite_ext(spr_trash, 1, 948, 17 + _y_diff, 1.3, 1.3, 0, c_red, 1);
+			if mouse_check_button_pressed(mb_left) {
+				if show_question("Are you sure you want to delete " + filename_name(_val) + "?") {
+					file_delete(_val);
+				}
+			}
+		} else {
+			draw_sprite_ext(spr_directory, 1, 931, _y_diff, 2, 2, 0, c_white, 1);
+		}
+		
 		draw_text_ext_transformed_colour(963, 6.5 + _y_diff, filename_name(_val), 999, 9999, 1, 1, 0, _col, _col, _col, _col, 1);
 		
 		if mouse_in_rectangle(934, 5 + _y_diff, 1310, 28 + _y_diff, false) {
