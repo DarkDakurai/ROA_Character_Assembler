@@ -11,12 +11,18 @@ if parsetabs{
 		txtwidt = max(txtwidt, string_width(data[@_g]));
 		_g++;
 	}
+	if array_length(data) == 0 array_push(data, "");
+	parse_syntax(self);
 	if _mod trigger_modifications(filestruct, self);
+	parsed = 1;
 }
 showcursors++;
 
-if highlight_parse == 60 parse_syntax(self);
-highlight_parse++;
+if parse_timer+1 parse_timer++;
+if parse_timer == parse_timer_elapsed{
+	parse_syntax(self);
+	parse_timer = -1;
+}
 
 textscroll_speed = [lerp(textscroll_speed[0], 0, .1), lerp(textscroll_speed[1], 0, .1)];
 if mouse_in_rectangle(314, 64, 314 + 1052, 64 + 703){
@@ -30,7 +36,7 @@ if mouse_in_rectangle(314, 64, 314 + 1052, 64 + 703){
 	if mouse_check_button_pressed(mb_left){
 		var _line = max(0, floor((mouse_y-64 - textview[1])/20));
 		var _lns = array_length(data);
-		var _pos = (_line >= _lns? string_length(data[_lns-1]): clamp(floor((mouse_x-358)/_cwdt), 0, string_length(data[_line])));
+		var _pos = (_line >= _lns? string_length(data[max(0, _lns-1)]): clamp(floor((mouse_x-358 - textview[0])/_cwdt), 0, string_length(data[_line])));
 		if _line >= _lns _line = _lns-1;
 		if !keyboard_check(vk_control) cursors = [];
 		create_cursor(_line, _pos);

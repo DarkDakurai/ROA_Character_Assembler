@@ -159,17 +159,19 @@ function cursor_check(_cur, _data, _tab){
 function trigger_modifications(_filestruct, _tab){
 	_filestruct.modified = true;
 	global.archive_modified = true;
-	if array_length(_tab.changes_buffer) >= _tab.changes_buffer_max array_delete(_tab.changes_buffer, 0, 1);
-	if array_length(_tab.cursors_buffer) >= _tab.changes_buffer_max array_delete(_tab.cursors_buffer, 0, 1);
+	if array_length(_tab.all_buffers) >= _tab.changes_buffer_max array_delete(_tab.all_buffers, 0, 1);
 	if _tab.undos{
-		print([array_length(_tab.changes_buffer)-_tab.undos, _tab.undos]);
-		array_delete(_tab.changes_buffer, array_length(_tab.changes_buffer)-_tab.undos, _tab.undos);
-		array_delete(_tab.cursors_buffer, array_length(_tab.cursors_buffer)-_tab.undos, _tab.undos);
+		array_delete(_tab.all_buffers, array_length(_tab.all_buffers)-_tab.undos, _tab.undos);
 		_tab.undos = 0;
 	}
-	array_push(_tab.changes_buffer, array_clone(_tab.data));
-	array_push(_tab.cursors_buffer, array_clone(_tab.cursors));
-	parse_syntax(_tab);
+	var _omni = [];
+	var _g = 0;
+	repeat array_length(all_container){
+		array_push(_omni, variable_instance_get(_tab, all_container[_g]));
+		_g++;
+	}
+	array_push(_tab.all_buffers, array_clone(_omni));
+	parse_timer = 0;
 }
 
 /// @desc							enable the modified flag for given file
@@ -178,22 +180,24 @@ function trigger_modifications(_filestruct, _tab){
 function trigger_modifications_nobuf(_filestruct, _tab){
 	_filestruct.modified = true;
 	global.archive_modified = true;
-	parse_syntax(_tab);
+	parse_timer = 0;
 }
 
 /// @desc							adds an action to the undo/redo buffer
 /// @param {obj_ScriptTab} Tab		Tab that owns the file
 function trigger_change_buf_nosave(_tab){
-	if array_length(_tab.changes_buffer) >= _tab.changes_buffer_max array_delete(_tab.changes_buffer, 0, 1);
-	if array_length(_tab.cursors_buffer) >= _tab.changes_buffer_max array_delete(_tab.cursors_buffer, 0, 1);
+	if array_length(_tab.all_buffers) >= _tab.changes_buffer_max array_delete(_tab.all_buffers, 0, 1);
 	if _tab.undos{
-		print([array_length(_tab.changes_buffer)-_tab.undos, _tab.undos]);
-		array_delete(_tab.changes_buffer, array_length(_tab.changes_buffer)-_tab.undos, _tab.undos);
-		array_delete(_tab.cursors_buffer, array_length(_tab.cursors_buffer)-_tab.undos, _tab.undos);
+		array_delete(_tab.all_buffers, array_length(_tab.all_buffers)-_tab.undos, _tab.undos);
 		_tab.undos = 0;
 	}
-	array_push(_tab.changes_buffer, array_clone(_tab.data));
-	array_push(_tab.cursors_buffer, array_clone(_tab.cursors));
+	var _omni = [];
+	var _g = 0;
+	repeat array_length(all_container){
+		array_push(_omni, variable_instance_get(_tab, all_container[_g]));
+		_g++;
+	}
+	array_push(_tab.all_buffers, array_clone(_omni));
 }
 
 /// @desc							pushes the data from a source array to a destination array
@@ -247,16 +251,8 @@ function cursors_write_char(_cursors, _file, _char){
 	var _am = array_length(_cursors)
 	var _i = 0, _g = 0;
 	repeat _am{
-		_i = 0;
 		var _c = _cursors[_g];
-		if _c.selection != -1 cursor_delete_selection(_c, _cursors, _file);
-		_file[@_c.line] = string_insert(_char, _file[_c.line], _c.pos+1);
-		repeat _am{
-			var _c2 = _cursors[_i];
-			if _c2.line == _c.line && _c2.pos >= _c.pos _c2.pos++;
-			if _c2.selection != -1 && _c2.selection[1] == _c.line && _c2.selection[0] >= _c.pos _c2.selection[0]++;
-			_i++;
-		}
+		cursor_write_char(_c, _cursors, _file, _char);
 		_g++;
 	}
 }
@@ -273,6 +269,12 @@ function cursor_write_char(_c, _cursors, _file, _char){
 	var _i = 0
 	if _c.selection != -1 cursor_delete_selection(_c, _cursors, _file);
 	_file[@_c.line] = string_insert(_char, _file[_c.line], _c.pos+1);
+	var _tab = obj_EDITORscripts.tab, _f = 0;
+	repeat array_length(_tab.highlight_banks){
+		var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+		_dat[@_c.line] = string_insert(" ", _dat[_c.line], _c.pos+1);
+		_f++;
+	}
 	repeat _am{
 		var _c2 = _cursors[_i];
 		if _c2.line == _c.line && _c2.pos >= _c.pos _c2.pos++;
@@ -293,6 +295,13 @@ function cursor_write_string(_c, _cursors, _file, _str){
 	var _i = 0
 	if _c.selection != -1 cursor_delete_selection(_c, _cursors, _file);
 	_file[@_c.line] = string_insert(_str, _file[_c.line], _c.pos+1);
+	var _tab = obj_EDITORscripts.tab, _f = 0;
+	var _spc = string_spaces(_len)
+	repeat array_length(_tab.highlight_banks){
+		var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+		_dat[@_c.line] = string_insert(_spc, _dat[_c.line], _c.pos+1);
+		_f++;
+	}
 	repeat _am{
 		var _c2 = _cursors[_i];
 		if _c2.line == _c.line && _c2.pos >= _c.pos _c2.pos += _len;
@@ -351,6 +360,15 @@ function cursor_write_newline(_c, _cursors, _file){
 	var nlstring = string_delete(_str, 0, _c.pos);
 	_file[@_c.line] = string_delete(_str, _c.pos+1, _len-_c.pos+1);
 	array_insert(_file, _c.line+1, nlstring);
+	var _tab = obj_EDITORscripts.tab, _f = 0;
+	repeat array_length(_tab.highlight_banks){
+		var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+		_str = _dat[_c.line];
+		nlstring = string_delete(_str, 0, _c.pos);
+		_dat[@_c.line] = string_delete(_str, _c.pos+1, _len-_c.pos+1);
+		array_insert(_dat, _c.line+1, nlstring);
+		_f++;
+	}
 	_c.line++;
 	_c.pos = 0;
 	_c.qolpos = 0;
@@ -386,9 +404,29 @@ function cursor_delete_selection(_c, _curs, _data){
 		_data[_topline] = string_delete(_data[_topline], _toppos+1, string_length(_data[_topline])-_toppos);
 		_data[_topline] += string_delete(_data[_botline], 1, _botpos);
 		if _lcut array_delete(_data, _topline+1, _lcut);
+		
+		var _tab = obj_EDITORscripts.tab, _f = 0;
+		repeat array_length(_tab.highlight_banks){
+			var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+			
+			_dat[_topline] = string_delete(_dat[_topline], _toppos+1, string_length(_dat[_topline])-_toppos);
+			_dat[_topline] += string_delete(_dat[_botline], 1, _botpos);
+			if _lcut array_delete(_dat, _topline+1, _lcut);
+			
+			_f++;
+		}
 	}else{
 		var _cut = abs(_c.pos - _c.selection[0]);
 		_data[_c.line] = string_delete(_data[_c.line], min(_c.pos, _c.selection[0])+1, _cut);
+		
+		var _tab = obj_EDITORscripts.tab, _f = 0;
+		repeat array_length(_tab.highlight_banks){
+			var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+			
+			_dat[_c.line] = string_delete(_dat[_c.line], min(_c.pos, _c.selection[0])+1, _cut);
+			
+			_f++;
+		}
 		repeat _am{
 			var _c2 = _curs[_i];
 			if _c2.line == _c.line && _c2.pos > _c.pos _c2.pos -= _cut;
@@ -425,9 +463,28 @@ function cursor_delete_char(_c, _cursors, _data, _canc){
 			}
 			_data[_c.line] += _data[_c.line+1];
 			array_delete(_data, _c.line+1, 1);
+			
+			var _tab = obj_EDITORscripts.tab, _f = 0;
+			repeat array_length(_tab.highlight_banks){
+				var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+			
+				_dat[_c.line] += _dat[_c.line+1];
+				array_delete(_dat, _c.line+1, 1);
+			
+				_f++;
+			}
 			_modif = true;
 		}else{
 			_data[@_c.line] = string_delete(_data[_c.line], _c.pos+1, 1);
+			
+			var _tab = obj_EDITORscripts.tab, _f = 0;
+			repeat array_length(_tab.highlight_banks){
+				var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+			
+				_dat[@_c.line] = string_delete(_dat[_c.line], _c.pos+1, 1);
+			
+				_f++;
+			}
 			repeat _am{
 				var _c2 = _cursors[_i];
 				if _c2.line == _c.line && _c2.pos > _c.pos _c2.pos = max(0, _c2.pos-1);
@@ -459,10 +516,29 @@ function cursor_delete_char(_c, _cursors, _data, _canc){
 				}
 				_data[@_nl] = string_concat(_data[_nl], _data[_ol]);
 				array_delete(_data, _ol, 1);
+				
+				var _tab = obj_EDITORscripts.tab, _f = 0;
+				repeat array_length(_tab.highlight_banks){
+					var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+			
+					_dat[@_nl] = string_concat(_dat[_nl], _dat[_ol]);
+					array_delete(_dat, _ol, 1);
+			
+					_f++;
+				}
 				_modif = true;
 			}
 		}else{
 			_data[@_c.line] = string_delete(_data[_c.line], _c.pos, 1);
+			
+			var _tab = obj_EDITORscripts.tab, _f = 0;
+			repeat array_length(_tab.highlight_banks){
+				var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+			
+				_dat[@_c.line] = string_delete(_dat[_c.line], _c.pos, 1);
+			
+				_f++;
+			}
 			repeat _am{
 				var _c2 = _cursors[_i];
 				if _c2.line == _c.line && _c2.pos >= _c.pos _c2.pos = max(0, _c2.pos-1);
@@ -500,9 +576,9 @@ function cursor_delete_char_cont(_cursors, _data, _canc){
 
 /// @desc							checks if a given character can be part of a variable name (a-zA-z_)
 /// @param {String} char
-function char_is_nameable(_ch){
+function char_is_nameable(_ch, _numbers = true){
 	var _asc = ord(_ch);
-	return _asc == clamp(_asc, 65, 90) || _asc == clamp(_asc, 97, 122) || _asc == clamp(_asc, 48, 57) || _asc == 95;
+	return _asc == clamp(_asc, 65, 90) || _asc == clamp(_asc, 97, 122) || (_numbers && _asc == clamp(_asc, 48, 57)) || _asc == 95;
 }
 
 /// @desc							resets the QOL positions of cursors, used to make them reposition when moving between lines
@@ -682,12 +758,19 @@ function cursors_duplicate_string(_cursors, _file){
 	var _succ = false, _am = array_length(_cursors);
 	if !_am return _succ;
 	var _g = 0;
+	var _tab = obj_EDITORscripts.tab, _f = 0;
 	repeat _am{
 		var _i = 0, _c = _cursors[_g];
 		var _sel = _c.selection != -1;
 		if _sel _succ |= cursor_write_multiline(cursor_grab_selection(_c, _file), _c, _cursors, _file, false);
 		else{
 			array_insert(_file, _c.line, _file[_c.line]);
+			_f = 0;
+			repeat array_length(_tab.highlight_banks){
+				var _dat = variable_instance_get(_tab, _tab.highlight_banks[_f]);
+				array_insert(_dat, _c.line, _dat[_c.line]);
+				_f++;
+			}
 			repeat _am{
 				var _c2 = _cursors[_i];
 				if _c2.line > _c.line _c2.line++;
@@ -750,12 +833,4 @@ function cursors_toggle_comment(_cursors, _file){
 		_g++;
 	}
 	return _succ;
-}
-
-/// @desc							parses the data of the tab and does syntax highlighting
-/// @param {obj_ScriptTab} Tab		Tab that owns the file
-function parse_syntax(_tab){
-	_tab.highlight_parse = 0;
-	
-	//TODO: this
 }

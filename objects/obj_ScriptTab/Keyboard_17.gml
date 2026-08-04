@@ -1,14 +1,16 @@
 if main_obj.tab != id exit;
-/*ctrl f*/
-print([undos, array_length(changes_buffer)])
+
 var _num = 0;
 if keyboard_check(ord("Z")) && !keyboard_check(vk_shift){
 	ctrl_cooldown[_num]--;
 	if ctrl_cooldown[_num] == ctrl_cd_max-1 || !ctrl_cooldown[_num]{
-		var _idx = array_length(changes_buffer)-2-undos;
+		var _idx = array_length(all_buffers)-2-undos;
 		if _idx<0 return;
-		data = array_clone(changes_buffer[_idx])
-		cursors = array_clone(cursors_buffer[_idx])
+		var _g = 0;
+		repeat array_length(all_container){
+			variable_instance_set(self, all_container[_g], array_clone(all_buffers[_idx][_g]))
+			_g++;
+		}
 		trigger_modifications_nobuf(filestruct, self);
 		undos++;
 		ctrl_cooldown[_num] = max(ctrl_cooldown[_num], 2);
@@ -21,8 +23,12 @@ if keyboard_check(ord("Y")) || (keyboard_check(ord("Z")) && keyboard_check(vk_sh
 	ctrl_cooldown[_num]--;
 	if ctrl_cooldown[_num] == ctrl_cd_max-1 || !ctrl_cooldown[_num]{
 		if !undos return;
-		cursors = array_clone(cursors_buffer[array_length(changes_buffer)-undos])
-		data = array_clone(changes_buffer[array_length(changes_buffer)-undos])
+		var _idx = array_length(all_buffers)-undos;
+		var _g = 0;
+		repeat array_length(all_container){
+			variable_instance_set(self, all_container[_g], array_clone(all_buffers[_idx][_g]))
+			_g++;
+		}
 		trigger_modifications_nobuf(filestruct, self);
 		undos--;
 		ctrl_cooldown[_num] = max(ctrl_cooldown[_num], 2);

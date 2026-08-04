@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_gmre",
+  "%Name":"scr_dialect_parsing",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_gmre",
+  "name":"scr_dialect_parsing",
   "parent":{
     "name":"Scripts",
     "path":"folders/Scripts.yy",
