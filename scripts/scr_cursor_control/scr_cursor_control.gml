@@ -8,7 +8,18 @@ function move_cursors(_cur, _dir, _data, _tab){
 	if !_am return;
 	var _g = 0;
 	if _dir%2{
-		repeat _am{
+		if keyboard_check(vk_alt) && false{ //never gonna be finished
+			array_sort(_cur, sort_cursors);
+			if _dir == 3 _g = _am-1;
+			if keyboard_check(vk_shift){
+				
+			}else{
+				repeat _am{
+					
+					_g += 1 - 2*(_dir == 3);
+				}
+			}
+		}else repeat _am{
 			var c = _cur[_g];
 			var _oldp = [c.pos, c.line];
 			c.line += _dir-2;
@@ -30,18 +41,23 @@ function move_cursors(_cur, _dir, _data, _tab){
 		repeat _am{
 			var c = _cur[_g];
 			var _oldp = [c.pos, c.line];
-			c.pos += 1 - _dir;
-			if _dir && c.pos < 0{
-				c.line--;
-				c.pos = (c.line < 0? 0: string_length(_data[c.line]));
-				c.line = max(0, c.line);
-			}else if !_dir && c.pos > string_length(_data[c.line]){
-				c.line++;
-				c.pos = 0;
-				if c.line > array_length(_data)-1{
-					c.line = array_length(_data)-1;
-					c.pos = string_length(_data[c.line]);
-				}
+			if keyboard_check(vk_alt) c.pos = (_dir? 0: string_length(_data[c.line]));
+			else{
+				do{
+					c.pos += 1 - _dir;
+					if _dir && c.pos < 0{
+						c.line--;
+						c.pos = (c.line < 0? 0: string_length(_data[c.line]));
+						c.line = max(0, c.line);
+					}else if !_dir && c.pos > string_length(_data[c.line]){
+						c.line++;
+						c.pos = 0;
+						if c.line > array_length(_data)-1{
+							c.line = array_length(_data)-1;
+							c.pos = string_length(_data[c.line]);
+						}
+					}
+				}until !(keyboard_check(vk_control) && char_is_nameable(string_char_at(_data[c.line], c.pos + (_dir>0))) && char_is_nameable(string_char_at(_data[c.line], c.pos + 1 - (_dir>0))));
 			}
 			c.qolpos = c.pos;
 			if keyboard_check(vk_shift){
@@ -133,6 +149,8 @@ function cursor_check(_cur, _data, _tab){
 		_tab.textscroll_speed = [0, 0];
 	}
 	_tab.showcursors = 0;
+	
+	array_sort(_tab.cursors, sort_cursors);
 }
 
 /// @desc							enable the modified flag for given file, also adds to the changes buffer
@@ -144,22 +162,53 @@ function trigger_modifications(_filestruct, _tab){
 	if array_length(_tab.changes_buffer) >= _tab.changes_buffer_max array_delete(_tab.changes_buffer, 0, 1);
 	if array_length(_tab.cursors_buffer) >= _tab.changes_buffer_max array_delete(_tab.cursors_buffer, 0, 1);
 	if _tab.undos{
-		array_delete(_tab.changes_buffer, array_length(_tab.changes_buffer)-_tab.undos-2, _tab.undos);
-		array_delete(_tab.cursors_buffer, array_length(_tab.cursors_buffer)-_tab.undos-2, _tab.undos);
+		print([array_length(_tab.changes_buffer)-_tab.undos, _tab.undos]);
+		array_delete(_tab.changes_buffer, array_length(_tab.changes_buffer)-_tab.undos, _tab.undos);
+		array_delete(_tab.cursors_buffer, array_length(_tab.cursors_buffer)-_tab.undos, _tab.undos);
+		_tab.undos = 0;
+	}
+	array_push(_tab.changes_buffer, array_clone(_tab.data));
+	array_push(_tab.cursors_buffer, array_clone(_tab.cursors));
+	parse_syntax(_tab);
+}
+
+/// @desc							enable the modified flag for given file
+/// @param {Struct} file_struct		file struct
+/// @param {obj_ScriptTab} Tab		Tab that owns the file
+function trigger_modifications_nobuf(_filestruct, _tab){
+	_filestruct.modified = true;
+	global.archive_modified = true;
+	parse_syntax(_tab);
+}
+
+/// @desc							adds an action to the undo/redo buffer
+/// @param {obj_ScriptTab} Tab		Tab that owns the file
+function trigger_change_buf_nosave(_tab){
+	if array_length(_tab.changes_buffer) >= _tab.changes_buffer_max array_delete(_tab.changes_buffer, 0, 1);
+	if array_length(_tab.cursors_buffer) >= _tab.changes_buffer_max array_delete(_tab.cursors_buffer, 0, 1);
+	if _tab.undos{
+		print([array_length(_tab.changes_buffer)-_tab.undos, _tab.undos]);
+		array_delete(_tab.changes_buffer, array_length(_tab.changes_buffer)-_tab.undos, _tab.undos);
+		array_delete(_tab.cursors_buffer, array_length(_tab.cursors_buffer)-_tab.undos, _tab.undos);
 		_tab.undos = 0;
 	}
 	array_push(_tab.changes_buffer, array_clone(_tab.data));
 	array_push(_tab.cursors_buffer, array_clone(_tab.cursors));
 }
 
-/// @desc							enable the modified flag for given file
-/// @param {Struct} file_struct		file struct
-function trigger_modifications_nobuf(_filestruct){
-	_filestruct.modified = true;
-	global.archive_modified = true;
+/// @desc							pushes the data from a source array to a destination array
+/// @param {Array} source
+/// @param {Array} destination
+function array_move(_src, _dest){
+	var _g = 0, _am = array_length(_src);
+	repeat _am{
+		array_push(_dest, variable_clone(_src[_g]));
+		_g++;
+	}
 }
 
-/// @desc							creates a copy of an array (1D)
+/// @desc							creates a copy of an array
+/// @param {Array} source
 function array_clone(_arr){
 	var _i = 0;
 	var _ret = [];
@@ -238,7 +287,7 @@ function cursor_write_char(_c, _cursors, _file, _char){
 /// @param {Array} file				array of strings
 /// @param {String} string			the string to write
 function cursor_write_string(_c, _cursors, _file, _str){
-	if _str == "" return;
+	if _str == "" return false;
 	var _len = string_length(_str);
 	var _am = array_length(_cursors)
 	var _i = 0
@@ -250,6 +299,62 @@ function cursor_write_string(_c, _cursors, _file, _str){
 		if _c2.selection != -1 && _c2.selection[1] == _c.line && _c2.selection[0] >= _c.pos _c2.selection[0] += _len;
 		_i++;
 	}
+	return true;
+}
+
+/// @desc							given a set of cursors and a file, it writes a newline for each
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
+function cursors_write_newline(_cursors, _file){
+	var _am = array_length(_cursors);
+	if !_am return false;
+	var _g = 0;
+	var _succ = false;
+	repeat _am{
+		var _c = _cursors[_g];
+		_succ |= cursor_write_newline(_c, _cursors, _file);
+		_g++;
+	}
+	return _succ;
+}
+
+/// @desc							given a cursor and a file, it writes a newline at that cursor
+/// @param {Struct} cursor			the cursor that writes
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
+function cursor_write_newline(_c, _cursors, _file){
+	var _am = array_length(_cursors);
+	if !_am return false;
+	if _c.selection != -1 cursor_delete_selection(_c, _cursors, _file);
+	var _str = _file[_c.line];
+	var _len = string_length(_str);
+	var _i = 0;
+	repeat _am{
+		var _c2 = _cursors[_i];
+		if _c2 != _c{
+			if _c2.line > _c.line _c2.line++;
+			if _c2.pos > _c.pos && _c.line == _c2.line{
+				_c2.line++;
+				_c2.pos = _c2.pos-_c.pos;
+				_c2.qolpos = _c2.pos;
+			}
+			if _c2.selection != -1{
+				if _c2.selection[1] > _c.line _c2.selection[1]++;
+				if _c2.selection[0] > _c.pos && _c.line == _c2.selection[1]{
+					_c2.selection[1]++;
+					_c2.selection[0] = _c2.selection[0]-_c.pos;
+				}
+			}
+		}
+		_i++
+	}
+	var nlstring = string_delete(_str, 0, _c.pos);
+	_file[@_c.line] = string_delete(_str, _c.pos+1, _len-_c.pos+1);
+	array_insert(_file, _c.line+1, nlstring);
+	_c.line++;
+	_c.pos = 0;
+	_c.qolpos = 0;
+	return true;
 }
 
 /// @desc							if a given cursor has a selection, then it deletes that selection
@@ -312,6 +417,10 @@ function cursor_delete_char(_c, _cursors, _data, _canc){
 					_c2.line--;
 					if _c2.line == _c.line _c2.pos += string_length(_data[_c.line]);
 				}
+				if _c2.selection != -1 && _c2.selection[1]> _c.line{
+					_c2.selection[1]--;
+					if _c2.selection[1] == _c.line _c2.selection[0] += string_length(_data[_c.line]);
+				}
 				_i++;
 			}
 			_data[_c.line] += _data[_c.line+1];
@@ -322,6 +431,7 @@ function cursor_delete_char(_c, _cursors, _data, _canc){
 			repeat _am{
 				var _c2 = _cursors[_i];
 				if _c2.line == _c.line && _c2.pos > _c.pos _c2.pos = max(0, _c2.pos-1);
+				if _c2.selection != -1 && _c2.selection[1] == _c.line && _c2.selection[0] > _c.pos _c2.selection[0] = max(0, _c2.selection[0]-1);
 				_i++;
 			}
 			_modif = true;
@@ -370,18 +480,22 @@ function cursor_delete_char(_c, _cursors, _data, _canc){
 /// @param {Array} file				array of strings
 /// @param {Real} del_pressed		if the deletion was done by pressing delete instead of backspace
 function cursor_delete_char_cont(_cursors, _data, _canc){
+	var _succ = false;
 	var _am = array_length(_cursors);
 	var _g = 0;
 	repeat _am{
 		var _c = _cursors[_g];
 		var _del = "";
-		if _c.selection != -1 cursor_delete_selection(_c, _cursors, _data);
-		else do{
+		if _c.selection != -1{
+			cursor_delete_selection(_c, _cursors, _data);
+			_succ = true;
+		}else do{
 			_del = string_char_at(_data[_c.line], _c.pos);
-			cursor_delete_char(_c, _cursors, _data, _canc);
+			if cursor_delete_char(_c, _cursors, _data, _canc) _succ = true;
 		}until !(char_is_nameable(_del) && char_is_nameable(string_char_at(_data[_c.line], _c.pos)))
 		_g++;
 	}
+	return _succ;
 }
 
 /// @desc							checks if a given character can be part of a variable name (a-zA-z_)
@@ -401,8 +515,11 @@ function cursor_reset_qolpos(_cursors){
 	}
 }
 
+/// @desc							writes a tab at the cursor positons, adds a tab at the start of line if selection is present
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
 function cursor_write_tabs(_cursors, _file){
-	var _g = 0;
+	var _g = 0, _succ = false;
 	repeat array_length(_cursors){
 		var _c = _cursors[_g];
 		if _c.selection != -1{
@@ -412,20 +529,24 @@ function cursor_write_tabs(_cursors, _file){
 			_c.pos = 0;
 			_c.line = min(_os[1], _op[1]);
 			repeat abs(_op[1]-_os[1])+1{
-				cursor_write_string(_c, _cursors, _file, "    ");
+				_succ |= cursor_write_string(_c, _cursors, _file, "    ");
 				_c.pos = 0;
 				_c.line++;
 			}
 			_c.selection = _os;
 			_c.pos = _op[0];
 			_c.line = _op[1];
-		}else cursor_write_string(_c, _cursors, _file, string_delete("    ", 1, _c.pos%4));
+		}else _succ |= cursor_write_string(_c, _cursors, _file, string_delete("    ", 1, _c.pos%4));
 		_g++;
 	}
+	return _succ;
 }
 
+/// @desc							removes a tab if the cursor is in front of x amount of spaces, triggered with shift tab
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
 function cursor_remove_tabs(_cursors, _file){
-	var _g = 0;
+	var _g = 0, _succ = false;
 	repeat array_length(_cursors){
 		var _c = _cursors[_g];
 		if _c.selection != -1{
@@ -436,7 +557,7 @@ function cursor_remove_tabs(_cursors, _file){
 			_c.line = min(_os[1], _op[1]);
 			repeat abs(_op[1]-_os[1])+1{
 				repeat 4{
-					if string_char_at(_file[_c.line], 1) == " " cursor_delete_char(_c, _cursors, _file, true);
+					if string_char_at(_file[_c.line], 1) == " " _succ |= cursor_delete_char(_c, _cursors, _file, true);
 					else break;
 				}
 				_c.pos = 0;
@@ -445,7 +566,196 @@ function cursor_remove_tabs(_cursors, _file){
 			_c.selection = _os;
 			_c.pos = _op[0];
 			_c.line = _op[1];
-		}else if string_replace_all(string_copy(_file[_c.line], 1, _c.pos-1), " ", "") == "" && _c.pos repeat min((_c.pos%4 == 0? 4: _c.pos%4), _c.pos) cursor_delete_char(_c, _cursors, _file, false);
+		}else if string_replace_all(string_copy(_file[_c.line], 1, _c.pos-1), " ", "") == "" && _c.pos repeat min((_c.pos%4 == 0? 4: _c.pos%4), _c.pos) _succ |= cursor_delete_char(_c, _cursors, _file, false);
 		_g++;
 	}
+	return _succ;
+}
+
+/// @desc							given a cursor and its file, it retuns an array of all the lines that are part of the selection, ordered and cut accordingly
+/// @param {Struct} cursor			the cursor array
+/// @param {Array} file				array of strings
+function cursor_grab_selection(_c, _file){
+	if _c.selection == -1 return [];
+	var _res = [];
+	if abs(cursor_position_to_anchor(_c)){
+		var _toppos = (_c.line > _c.selection[1]? _c.selection[0]: _c.pos);
+		var _botpos = (_c.line < _c.selection[1]? _c.selection[0]: _c.pos);
+		var _topline = min(_c.selection[1], _c.line);
+		var _botline = max(_c.selection[1], _c.line);
+		array_push(_res, string_copy(_file[_topline], _toppos+1, string_length(_file[_topline])-_toppos));
+		var _g = 1;
+		repeat _botline-_topline-1{
+			array_push(_res, _file[_topline+_g]);
+			_g++;
+		}
+		array_push(_res, string_copy(_file[_botline], 1, _botpos));
+	}else{
+		var _p1 = min(_c.pos, _c.selection[0]), _p2 = max(_c.pos, _c.selection[0]);
+		array_push(_res, string_copy(_file[_c.line], _p1+1, _p2-_p1));
+	}
+	return _res;
+}
+
+/// @desc							copies all selection data to the clipboard in a specific format
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
+/// @param {Real} delete			boolean to check if the selection should be deleted
+function cursors_copy_selection(_cursors, _file, _delete){
+	array_sort(_cursors, sort_cursors);
+	var _am = array_length(_cursors), _g = 0, _copies = [], _succ = false;
+	repeat _am{
+		var _c = _cursors[_g];
+		if _c.selection != -1{
+			array_move(cursor_grab_selection(_c, _file), _copies);
+			if _delete && cursor_delete_selection(_c, _cursors, _file) _succ = true;
+		}
+		_g++;
+	}
+	var _cop = array_length(_copies);
+	//format and copy to clipboard
+	if _cop{
+		_g = 0;
+		var _final = "";
+		repeat _cop{
+			_final += _copies[_g] + (_g<_cop-1? "\n": "");
+			_g++;
+		}
+		clipboard_set_text(_final);
+	}
+	return _succ;
+}
+
+/// @desc							parses the clipboard and pastes the data on the cursors
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
+function cursors_paste_selection(_cursors, _file){
+	var _succ = false;
+	if !clipboard_has_text() return _succ;
+	array_sort(_cursors, sort_cursors);
+	var _data = string_split(clipboard_get_text(), "\n", 0);
+	var _ls = array_length(_data), _am = array_length(_cursors), _g = 0;
+	if _am == _ls repeat _am{
+		_succ |= cursor_write_string(_cursors[_g], _cursors, _file, _data[_g]);
+		_g++;
+	}else repeat _am{
+		var _i = 0, _c = _cursors[_g];
+		repeat _ls{
+			_succ |= cursor_write_string(_c, _cursors, _file, _data[_i]);
+			if _i < _ls-1 cursor_write_newline(_c, _cursors, _file)
+			_i++;
+		}
+		_g++;
+	}
+	return _succ;
+}
+/// @desc							parses the clipboard and pastes the data on the cursors
+/// @param {Array} text				the text to write as an array of lines
+/// @param {Struct} cursor			the cursor that writes
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
+/// @param {Real} Erase_selection	if it should erase any selection the cursor had
+function cursor_write_multiline(_data, _c, _cursors, _file, _erase_sel){
+	var _succ = false;
+	var _ls = array_length(_data);
+	var _i = 0
+	var _sel = array_clone(_c.selection);
+	var _opos = [_c.pos, _c.line];
+	if !_erase_sel _c.selection = -1;
+	repeat _ls{
+		_succ |= cursor_write_string(_c, _cursors, _file, _data[_i]);
+		if _i < _ls-1 cursor_write_newline(_c, _cursors, _file)
+		_i++;
+	}
+	if !_erase_sel{
+		_c.selection = _sel;
+		_c.pos = _opos[0];
+		_c.line = _opos[1];
+	}
+	return _succ;
+}
+
+/// @desc							duplicates a selection or line
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
+function cursors_duplicate_string(_cursors, _file){
+	var _succ = false, _am = array_length(_cursors);
+	if !_am return _succ;
+	var _g = 0;
+	repeat _am{
+		var _i = 0, _c = _cursors[_g];
+		var _sel = _c.selection != -1;
+		if _sel _succ |= cursor_write_multiline(cursor_grab_selection(_c, _file), _c, _cursors, _file, false);
+		else{
+			array_insert(_file, _c.line, _file[_c.line]);
+			repeat _am{
+				var _c2 = _cursors[_i];
+				if _c2.line > _c.line _c2.line++;
+				if _c2.selection != -1 && _c2.selection[1] > _c.line _c2.selection[1]++;
+				_i++;
+			}
+			_succ = true;
+		}
+		_g++;
+	}
+	return _succ;
+}
+
+/// @desc							comments lines with cursors or selection on them in a given file
+/// @param {Array} cursors			the cursor array
+/// @param {Array} file				array of strings
+function cursors_toggle_comment(_cursors, _file){
+	var _succ = false, _am = array_length(_cursors);
+	if !_am return _succ;
+	var _g = 0;
+	repeat _am{
+		var _c = _cursors[_g];
+		var _opos = _c.pos;
+		if _c.selection != -1{
+			var _oline = _c.line, _i = 0;
+			var _sel = array_clone(_c.selection);
+			var _add = 0;
+			_c.selection = -1;
+			repeat abs(_oline-_sel[1])+1{
+				var _ln = min(_oline, _sel[1])+_i;
+				if string_copy(_file[_ln], 1, 2) == "//"{
+					if _ln == _oline _add = -1;
+					_c.line = _ln;
+					_c.pos = 0;
+					repeat 2 _succ |= cursor_delete_char(_c, _cursors, _file, true);
+				}else if string_length(_file[_ln]){
+					if _ln == _oline _add = -1;
+					_c.line = _ln;
+					_c.pos = 0;
+					_succ |= cursor_write_string(_c, _cursors, _file, "//");
+				}
+				_i++;
+			}
+			_c.pos = _opos;
+			_c.line = _oline;
+			_c.selection = _sel;
+			if string_length(_file[_oline]) _c.pos += 2*_add;
+		}else if string_length(_file[_c.line]){
+			_c.pos = 0;
+			var _add = 0;
+			if string_copy(_file[_c.line], 1, 2) == "//"{
+				repeat 2 _succ |= cursor_delete_char(_c, _cursors, _file, true);
+				_add = -1;
+			}else{
+				_succ |= cursor_write_string(_c, _cursors, _file, "//");
+				_add = 1;
+			}
+			_c.pos = _opos + 2*_add;
+		}
+		_g++;
+	}
+	return _succ;
+}
+
+/// @desc							parses the data of the tab and does syntax highlighting
+/// @param {obj_ScriptTab} Tab		Tab that owns the file
+function parse_syntax(_tab){
+	_tab.highlight_parse = 0;
+	
+	//TODO: this
 }

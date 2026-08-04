@@ -3,14 +3,20 @@ if parsetabs{
 	parsetabs = 0;
 	var _g = 0;
 	draw_set_font(fnt_maplemono_SDF);
+	var _mod = false;
 	repeat array_length(data){
-		data[@_g] = string_replace_all(data[_g], "	", "    ")
+		var _new = string_replace_all(data[_g], "	", "    ");
+		_mod |= (_new != data[@_g]);
+		data[@_g] = _new;
 		txtwidt = max(txtwidt, string_width(data[@_g]));
 		_g++;
 	}
-	trigger_modifications(filestruct, self);
+	if _mod trigger_modifications(filestruct, self);
 }
 showcursors++;
+
+if highlight_parse == 60 parse_syntax(self);
+highlight_parse++;
 
 textscroll_speed = [lerp(textscroll_speed[0], 0, .1), lerp(textscroll_speed[1], 0, .1)];
 if mouse_in_rectangle(314, 64, 314 + 1052, 64 + 703){
@@ -82,4 +88,6 @@ function create_cursor(_line, _pos){
 	*/
 	cursor_check(cursors, data, self);
 	array_sort(cursors, sort_cursors);
+	trigger_change_buf_nosave(self);
+	last_cursor = _latest;
 }

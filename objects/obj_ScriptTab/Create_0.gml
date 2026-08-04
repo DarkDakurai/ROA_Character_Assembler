@@ -9,12 +9,13 @@ textscroll_speed = [0, 0];
 parsetabs = 1;
 txtwidt = 0;
 
+last_cursor = noone;
 cursors = [];
 showcursors = 0;
 cursor_hold_pause = 20;
 cursor_hold_delay = 1;
 
-direction_buffer = [5, 5, 5, 5, 5, 5, 5];
+direction_buffer = array_create(7, 5);
 
 main_obj = noone;
 
@@ -34,4 +35,7 @@ cursors_buffer = [];
 changes_buffer_max = 256;
 undos = 0;
 ctrl_cd_max = 20;
-ctrl_cooldown = [ctrl_cd_max, ctrl_cd_max, ctrl_cd_max, ctrl_cd_max, ctrl_cd_max, ctrl_cd_max, ctrl_cd_max];
+ctrl_cooldown = array_create(10, ctrl_cd_max);
+
+//syntax highlight
+highlight_parse = 0;
